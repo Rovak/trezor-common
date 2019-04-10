@@ -11,7 +11,7 @@ option java_outer_classname = "TrezorMessageTron";
  * @next Failure
  */
 message TronGetAddress {
-    repeated uint32 address_n = 1;  // BIP-32 path to derive the key from master node
+    repeated uint32 address_n = 1; // BIP-32 path to derive the key from master node
     optional bool show_display = 2; // Optionally show on display before sending the result
 }
 
@@ -20,7 +20,7 @@ message TronGetAddress {
  * @end
  */
 message TronAddress {
-    optional string address = 1;                                // Tron address (base58)
+    optional string address = 1; // Tron address (base58)
 }
 
 /**
@@ -29,78 +29,99 @@ message TronAddress {
  * @next TronSignedTx
  */
 message TronSignTx {
-    repeated uint32 address_n = 1;                              // BIP-32 path to derive the key from master node
+    repeated uint32 address_n = 1; // BIP-32 path to derive the key from master node
     // Common part of transaction
-    optional bytes ref_block_bytes = 2;                         // Reference block number
-    optional bytes ref_block_hash = 3;                          // Reference block hash
-    optional uint64 expiration = 4;                             // Transaction expiration
-    optional string data = 5;                                   // Extra transaction info
-    optional TronContract contract = 6;                         // Contract messages
-    optional uint64 timestamp = 7;                              // UTC timestamp
+    optional bytes ref_block_bytes = 2; // Reference block number
+    optional bytes ref_block_hash = 3; // Reference block hash
+    optional uint64 expiration = 4; // Transaction expiration
+    optional string data = 5; // Extra transaction info
+    optional TronContract contract = 6; // Contract messages
+    optional uint64 timestamp = 7; // UTC timestamp
 
     /***
      * Tron Contracts Messages
      *
      */
     message TronContract {
+
+        message TronKey {
+            optional bytes address = 1;
+            optional int64 weight = 2;
+        }
+
+        message TronPermission {
+            enum PermissionType {
+                Owner = 0;
+                Witness = 1;
+                Active = 2;
+            }
+            optional PermissionType type = 1;
+            optional int32 id = 2; //Owner id=0, Witness id=1, Active id start by 2
+            optional string permission_name = 3;
+            optional int64 threshold = 4;
+            optional int32 parent_id = 5;
+            optional bytes operations = 6; //1 bit 1 contract
+            repeated TronKey keys = 7;
+        }
+
         // Update account name
         message TronAccountUpdateContract {
-            optional string account_name = 1;                   // Account name is not unique
+            optional string account_name = 1; // Account name is not unique
         }
         // Transfer TRX
         message TronTransferContract {
-            optional bytes to_address = 1;                      // To address - decoded base 58
-            optional uint64 amount = 2;                         // TRX amount in sun (10^-6)
+            optional bytes to_address = 1; // To address - decoded base 58
+            optional uint64 amount = 2; // TRX amount in sun (10^-6)
         }
         // Transfer asset
         message TronTransferAssetContract {
-            optional string asset_name = 1;                     // Asset name
-            optional bytes to_address = 2;                      // To address - decoded base 58
-            optional uint64 amount = 3;                         // Amount to transfer
+            optional string asset_name = 1; // Asset name
+            optional bytes to_address = 2; // To address - decoded base 58
+            optional uint64 amount = 3; // Amount to transfer
         }
         // Vote witness
         message TronVoteWitnessContract {
             message TronVote {
-                optional bytes vote_address = 1;                // Candidate Address - decoded base 58
-                optional uint64 vote_count = 2;                 // Amount of votes
+                optional bytes vote_address = 1; // Candidate Address - decoded base 58
+                optional uint64 vote_count = 2; // Amount of votes
             }
-            repeated TronVote votes = 1;                        // votes
+            repeated TronVote votes = 1; // votes
         }
         // Upgrade account to witness
         message TronWitnessCreateContract {
-            optional string url = 1;                             // Witness URL
+            optional string url = 1; // Witness URL
         }
         // Update witness URL
         message TronWitnessUpdateContract {
-            optional string update_url = 2;                      // Witness URL
+            optional string update_url = 2; // Witness URL
         }
         // Issue Asset
         message TronAssetIssueContract {
             message TronFrozenSupply {
-                optional uint64 frozen_amount = 1;              // Amount frozen
-                optional uint64 frozen_days = 2;                // Days from issue date
+                optional uint64 frozen_amount = 1; // Amount frozen
+                optional uint64 frozen_days = 2; // Days from issue date
             }
-            optional string name = 2;                           // Asset name
-            optional string abbr = 3;                           // Asset abbreviation
-            optional uint64 total_supply = 4;                   // Total supply including frozen
-            repeated TronFrozenSupply frozen_supply = 5;        // Frozen supply
-            optional uint32 trx_num = 6;                        // Amount of TRX (exchange ratio)
-            optional uint32 num = 7;                            // Amount of tokens (exchange ratio)
-            optional uint64 start_time = 8;                     // Negotiation start date and time
-            optional uint64 end_time = 9;                       // Negotiation end date and time
-            optional string description = 10;                   // Asset description
-            optional string url = 11;                           // Asset URL
+            optional string name = 2; // Asset name
+            optional string abbr = 3; // Asset abbreviation
+            optional uint64 total_supply = 4; // Total supply including frozen
+            repeated TronFrozenSupply frozen_supply = 5; // Frozen supply
+            optional uint32 trx_num = 6; // Amount of TRX (exchange ratio)
+            optional uint32 num = 7; // Amount of tokens (exchange ratio)
+            optional uint64 start_time = 8; // Negotiation start date and time
+            optional uint64 end_time = 9; // Negotiation end date and time
+            optional string description = 10; // Asset description
+            optional string url = 11; // Asset URL
         }
         // Participate in an asset
         message TronParticipateAssetIssueContract {
-            optional bytes to_address = 1;                      // Asset issuer address - decoded base 58
-            optional string asset_name = 2;                     // The name of target asset
-            optional uint64 amount = 3;                         // TRX amount in sun
+            optional bytes to_address = 1; // Asset issuer address - decoded base 58
+            optional string asset_name = 2; // The name of target asset
+            optional uint64 amount = 3; // TRX amount in sun
         }
         // Freeze TRX balance
         message TronFreezeBalanceContract {
-            optional uint64 frozen_balance = 1;                 // Amount to freeze
-            optional uint64 frozen_duration = 2;                // Freeze minimal duration in days
+            optional uint64 frozen_balance = 1; // Amount to freeze
+            optional uint64 frozen_duration = 2; // Freeze minimal duration in days
         }
         // Unfreeze TRX Balance
         message TronUnfreezeBalanceContract {
@@ -113,26 +134,144 @@ message TronSignTx {
         }
         // Update Asset
         message TronUpdateAssetContract {
-            optional string description = 1;                    // New description
-            optional string url = 2;                            // New URL
+            optional string description = 1; // New description
+            optional string url = 2; // New URL
         }
         // Network proposal contract
         message TronProposalCreateContract {
             message TronProposalParameters {
-                optional uint64 key = 1;                        // Parameter key
-                optional uint64 value = 2;                      // Parameter value
+                optional uint64 key = 1; // Parameter key
+                optional uint64 value = 2; // Parameter value
             }
-            repeated TronProposalParameters parameters = 1;     // Parameter to be changed
+            repeated TronProposalParameters parameters = 1; // Parameter to be changed
         }
         // Approval contract
         message TronProposalApproveContract {
-            optional uint64 proposal_id = 1;                    // Proposal ID
-            optional bool is_add_approval = 2;                  // Add or remove approval
+            optional uint64 proposal_id = 1; // Proposal ID
+            optional bool is_add_approval = 2; // Add or remove approval
         }
         // Delete proposal
         message TronProposalDeleteContract {
-            optional uint64 proposal_id = 1;                    // Proposal ID
+            optional uint64 proposal_id = 1; // Proposal ID
         }
+        // Create Smart Contract
+        message TronCreateSmartContract {
+            message SmartContract {
+                message ABI {
+                    message Entry {
+                        enum EntryType {
+                            UnknownEntryType = 0;
+                            Constructor = 1;
+                            Function = 2;
+                            Event = 3;
+                            Fallback = 4;
+                        }
+                        message Param {
+                            optional bool indexed = 1;
+                            optional string name = 2;
+                            optional string type = 3;
+                            // SolidityType type = 3;
+                        }
+                        enum StateMutabilityType {
+                            UnknownMutabilityType = 0;
+                            Pure = 1;
+                            View = 2;
+                            Nonpayable = 3;
+                            Payable = 4;
+                        }
+
+                        optional bool anonymous = 1;
+                        optional bool constant = 2;
+                        optional string name = 3;
+                        repeated Param inputs = 4;
+                        repeated Param outputs = 5;
+                        optional EntryType type = 6;
+                        optional bool payable = 7;
+                        optional StateMutabilityType stateMutability = 8;
+                    }
+                    repeated Entry entrys = 1;
+                }
+                optional bytes origin_address = 1;
+                optional bytes contract_address = 2;
+                optional ABI abi = 3;
+                optional bytes bytecode = 4;
+                optional int64 call_value = 5;
+                optional int64 consume_user_resource_percent = 6;
+                optional string name = 7;
+                optional int64 origin_energy_limit = 8;
+
+            }
+
+            optional bytes owner_address = 1; // Owner Address
+            optional SmartContract new_contract = 2; // Contract to Deploy
+            optional int64 call_token_value = 3; // Token Value
+            optional int64 token_id = 4; // Token ID
+        }
+        // TronTriggerSmartContract
+        message TronTriggerSmartContract {
+            optional bytes owner_address = 1;
+            optional bytes contract_address = 2;
+            optional int64 call_value = 3;
+            optional bytes data = 4;
+            optional int64 call_token_value = 5;
+            optional int64 token_id = 6;
+        }
+        // TronUpdateSettingContract
+        message TronUpdateSettingContract {
+            optional bytes owner_address = 1;
+            optional bytes contract_address = 2;
+            optional int64 consume_user_resource_percent = 3;
+        }
+        // TronExchangeCreateContract
+        message TronExchangeCreateContract {
+            optional bytes owner_address = 1;
+            optional bytes first_token_id = 2;
+            optional int64 first_token_balance = 3;
+            optional bytes second_token_id = 4;
+            optional int64 second_token_balance = 5;
+        }
+        // TronExchangeInjectContract
+        message TronExchangeInjectContract {
+            optional bytes owner_address = 1;
+            optional int64 exchange_id = 2;
+            optional bytes token_id = 3;
+            optional int64 quant = 4;
+        }
+        // TronExchangeWithdrawContract
+        message TronExchangeWithdrawContract {
+            optional bytes owner_address = 1;
+            optional int64 exchange_id = 2;
+            optional bytes token_id = 3;
+            optional int64 quant = 4;
+        }
+        // TronExchangeTransactionContract
+        message TronExchangeTransactionContract {
+            optional bytes owner_address = 1;
+            optional int64 exchange_id = 2;
+            optional bytes token_id = 3;
+            optional int64 quant = 4;
+            optional int64 expected = 5;
+        }
+        // TronUpdateEnergyLimitContract
+        message TronUpdateEnergyLimitContract {
+            optional bytes owner_address = 1;
+            optional bytes contract_address = 2;
+            optional int64 origin_energy_limit = 3;
+        }
+        // TronAccountPermissionUpdateContract
+        message TronAccountPermissionUpdateContract {
+            optional bytes owner_address = 1;
+            optional TronPermission owner = 2; //Empty is invalidate
+            optional TronPermission witness = 3; //Can be empty
+            repeated TronPermission actives = 4; //Empty is invalidate
+
+        }
+        // TronCancelDeferredTransactionContract
+        message TronCancelDeferredTransactionContract {
+            optional bytes transactionId = 1;
+            optional bytes ownerAddress = 2;
+        }
+
         optional TronTransferContract transfer_contract = 1;
         optional TronTransferAssetContract transfer_asset_contract = 2;
         optional TronVoteWitnessContract vote_witness_contract = 4;
@@ -149,6 +288,16 @@ message TronSignTx {
         optional TronProposalCreateContract proposal_create_contract = 16;
         optional TronProposalApproveContract proposal_approve_contract = 17;
         optional TronProposalDeleteContract proposal_delete_contract = 18;
+        optional TronCreateSmartContract create_smart_contract = 30;
+        optional TronTriggerSmartContract trigger_smart_contract = 31;
+        optional TronUpdateSettingContract update_setting_contract = 33;
+        optional TronExchangeCreateContract exchange_create_contract = 41;
+        optional TronExchangeInjectContract exchange_inject_contract = 42;
+        optional TronExchangeWithdrawContract exchange_withdraw_contract = 43;
+        optional TronExchangeTransactionContract exchange_transaction_contract = 44;
+        optional TronUpdateEnergyLimitContract update_energy_limit_contract = 45;
+        optional TronAccountPermissionUpdateContract account_permission_update_contract = 46;
+        optional TronCancelDeferredTransactionContract cancel_deferred_transaction_contract = 47;
     }
 }
 
@@ -157,6 +306,6 @@ message TronSignTx {
  * @end
  */
 message TronSignedTx {
-    optional bytes signature = 1;                               // Transaction signature
-    optional bytes serialized_tx = 2;                           // Serialized transaction
+    optional bytes signature = 1; // Transaction signature
+    optional bytes serialized_tx = 2; // Serialized transaction
 }
